@@ -7,6 +7,7 @@ import UserList from '@/pages/UserList'
 import UserDetail from '@/pages/UserDetail'
 
 function App() {
+
   return (
     <BrowserRouter>
       <Routes>

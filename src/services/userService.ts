@@ -19,10 +19,10 @@ export async function createVerifikator(body: AddVerifikatorFormData) {
     }
 }
 
-export async function getAllUser(page?: string) {
+export async function getAllUser(page: string, filter:string) {
     const url = page ? page : 'user';
     try {
-        const res = await axios.get(url);
+        const res = await axios.get(`${url}?filter=${filter}`);
         return res.data;
     } catch (error) {
         throw new Error("Gagal mengambil data user!");
@@ -41,6 +41,15 @@ export async function getUser(id:number) {
 export async function promoteUser(id:number) {
     try {
         const res = await axios.put(`user/${id}/promote`);
+        return res.data;
+    } catch (error) {
+        throw new Error("Gagal mengambil data user!");
+    }
+}
+
+export async function verifyUser(id:number) {
+    try {
+        const res = await axios.post(`user/${id}/verify`);
         return res.data;
     } catch (error) {
         throw new Error("Gagal mengambil data user!");

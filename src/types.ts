@@ -12,7 +12,8 @@ export interface User {
     tanggal_lahir: string,
     jenis_kelamin: string,
     alamat: string,
-    level: number
+    level: number,
+    verified_at?: string
 }
 
 export type AddVerifikatorFormData = {
