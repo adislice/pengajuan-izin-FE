@@ -2,18 +2,20 @@ import Button from "@/components/Button";
 import { Modal } from "@/components/Modal";
 import RadioButton from "@/components/RadioButton";
 import TextInput from "@/components/TextInput";
-import { AddVerificatorFormData } from "@/types";
+import { AddVerifikatorFormData } from "@/types";
 import { ucfirst } from "@/utils/helper";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { XIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import * as yup from 'yup';
+import Swal from 'sweetalert2';
+import { createVerifikator } from "@/services/userService";
 
-interface AddVerificationModalProps {
+interface AddVerifikatorModalProps {
   onCloseClicked: () => void
 }
 
-const AddVerificatorSchema = yup.object().shape({
+const AddVerifikatorSchema = yup.object().shape({
   nama: yup.string().required(),
   email: yup.string().email().required(),
   tempat_lahir: yup.string().required(),
@@ -23,14 +25,33 @@ const AddVerificatorSchema = yup.object().shape({
   password: yup.string().required()
 })
 
-export default function AddVerificationModal({ onCloseClicked }: AddVerificationModalProps) {
-  const { register, handleSubmit, formState: { errors } } = useForm<AddVerificatorFormData>({
-    resolver: yupResolver(AddVerificatorSchema)
+export default function AddVerifikatorModal({ onCloseClicked }: AddVerifikatorModalProps) {
+  const { register, handleSubmit, formState: { errors } } = useForm<AddVerifikatorFormData>({
+    resolver: yupResolver(AddVerifikatorSchema)
   });
 
-  function onSubmit(data: AddVerificatorFormData) {
-    console.log(data);
+  function onSubmit(data: AddVerifikatorFormData) {
+    Swal.fire("Menyimpan data...")
+    Swal.showLoading()
+    createVerifikator(data).then(_res => {
+      Swal.fire({
+        title: 'Sukses',
+        text: "Berhasil menambah user verifikator",
+        icon: 'success'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          onCloseClicked();
+        }
+      });
+    }).catch((error) => {
+      Swal.fire({
+        title: 'Kesalahan',
+        text: error.message,
+        icon: 'error'
+      });
+    });
   }
+
   return (
     <Modal>
       <div className="flex items-center justify-center h-full w-full">

@@ -1,57 +1,44 @@
-import AddVerificationModal from "@/components/AddVerificatorModal";
+import AddVerifikatorModal from "@/components/AddVerifikatorModal";
 import Button from "@/components/Button";
-import { Modal } from "@/components/Modal";
-import TextInput from "@/components/TextInput";
+import DetailUserModal from "@/components/DetailUserModal";
+import Pagination from "@/components/Pagination";
+import { Table, TableBody, TableData, TableHead, TableHeader, TableRow } from "@/components/Table";
+import { getAllUser } from "@/services/userService";
 import { User } from "@/types";
-import { XIcon } from "lucide-react";
-import { useState } from "react";
-import { Link, Outlet } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import Swal from 'sweetalert2';
 
 export default function UserList() {
   const [isAddVerifModalOpen, setIsAddVerifModalOpen] = useState(false);
-  const [users, setUsers] = useState<User[]>([
-    {
-      id: 1,
-      nama: "Adi",
-      email: 'adi@gmail.com',
-      alamat: 'jl kaliurang',
-      jenis_kelamin: 'L',
-      tanggal_lahir: '2001-09-01',
-      tempat_lahir: 'Pekalongan',
-      level: 1,
-    },
-    {
-      id: 2,
-      nama: "Adi",
-      email: 'adi@gmail.com',
-      alamat: 'jl kaliurang',
-      jenis_kelamin: 'L',
-      tanggal_lahir: '2001-09-01',
-      tempat_lahir: 'Pekalongan',
-      level: 1,
-    },
-    {
-      id: 3,
-      nama: "Adi",
-      email: 'adi@gmail.com',
-      alamat: 'jl kaliurang',
-      jenis_kelamin: 'L',
-      tanggal_lahir: '2001-09-01',
-      tempat_lahir: 'Pekalongan',
-      level: 1,
-    },
-    {
-      id: 4,
-      nama: "Adi",
-      email: 'adi@gmail.com',
-      alamat: 'jl kaliurang',
-      jenis_kelamin: 'L',
-      tanggal_lahir: '2001-09-01',
-      tempat_lahir: 'Pekalongan',
-      level: 1,
-    }
-  ])
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [currentId, setCurrentId] = useState(0);
+  const [pagination, setPagination] = useState<any[]>([]);
+  const [currentPage, setCurrentPage] = useState('');
+  const [users, setUsers] = useState<User[]>([]);
 
+  function fetchUser() {
+    const page = currentPage;
+    getAllUser(page).then((data) => {
+      setUsers(data.data);
+      setPagination(data.links);
+    }).catch((err) => {
+      Swal.fire({
+        title: "Kesalahan",
+        text: err.message,
+        icon: 'error'
+      });
+    });
+  }
+
+  useEffect(() => {
+    fetchUser();
+  }, [])
+
+  useEffect(() => {
+    fetchUser();
+  }, [currentPage])
+  
   return (
     <div className="flex w-full mx-auto bg-gray-100">
       <div className="w-4/5 flex flex-col px-10 py-8 mx-auto">
@@ -65,50 +52,53 @@ export default function UserList() {
           </div>
         </div>
 
-        <div className="relative my-2 overflow-x-auto shadow-md sm:rounded-lg border">
-          <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-              <tr>
-                <th scope="col" className="py-3 px-4">
-                  Nama
-                </th>
-                <th scope="col" className="py-3 px-4">
-                  Email
-                </th>
-                <th scope="col" className="py-3 px-4">
-                  Level Pengguna
-                </th>
-                <th scope="col" className="py-3 px-4">
-                  Aksi
-                </th>
-              </tr>
-            </thead>
-            <tbody>
+        <div className="p-3 rounded-lg bg-white my-4 shadow">
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableHeader text="Nama" />
+                <TableHeader text="Email" />
+                <TableHeader text="Level Pengguna" />
+                <TableHeader text="Aksi" />
+              </TableRow>
+            </TableHead>
+            <TableBody>
               {users.map(user => (
-                <tr key={user.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                  <td className="py-3 px-4">
+                <TableRow key={user.id}>
+                  <TableData>
                     {user.nama}
-                  </td>
-                  <td className="py-3 px-4">
+                  </TableData>
+                  <TableData>
                     {user.email}
-                  </td>
-                  <td className="py-3 px-4">
-                    {user.level}
-                  </td>
-                  <td className="py-3 px-4">
-                    <Link to={`/user/${user.id}`} key={user.id} className="rounded p-1 flex hover:bg-gray-100">Lihat</Link>
-                  </td>
-                </tr>
+                  </TableData>
+                  <TableData>
+                    {user.level == 0 ? 'Admin' : user.level == 1 ? 'Verifikator' : 'Pengguna Biasa'}
+                  </TableData>
+                  <TableData>
+                    <button onClick={() => {
+                      setIsDetailModalOpen(true);
+                      setCurrentId(user.id)
+                    }}>
+                      Lihat
+                    </button>
+                  </TableData>
+                </TableRow>
               ))}
-
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
+          <div className="mt-2 flex justify-end">
+            <Pagination links={pagination} onBtnClick={setCurrentPage} />
+          </div>
         </div>
       </div>
-
       {isAddVerifModalOpen && (
-        <AddVerificationModal onCloseClicked={() => setIsAddVerifModalOpen(false)} />
+        <AddVerifikatorModal onCloseClicked={() => setIsAddVerifModalOpen(false)} />
       )}
-    </div>
+
+      {isDetailModalOpen && <DetailUserModal id={currentId}
+        onCloseClicked={() => setIsDetailModalOpen(false)}
+        shouldRefresh={() => fetchUser()}
+      />}
+    </div >
   )
 }

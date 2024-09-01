@@ -1,8 +1,9 @@
 import NavLinkActive from "@/components/NavLinkActive";
+import { useAuth } from "@/context/AuthProvider";
 import { FileTextIcon, HouseIcon, UserIcon } from "lucide-react";
-import { Link, NavLink } from "react-router-dom";
 
 export default function Navbar() {
+  const auth = useAuth();
 
   return (
     <header className="antialiased flex shadow bg-white z-10">
@@ -30,6 +31,7 @@ export default function Navbar() {
               </NavLinkActive>
             </li>
           </ul>
+          <div>{auth.user?.nama}</div>
         </div>
       </nav>
     </header>

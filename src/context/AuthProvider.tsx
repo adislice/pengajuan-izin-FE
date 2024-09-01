@@ -1,39 +1,54 @@
-import { LoginFormData } from "@/types";
+import { LoginFormData, User } from "@/types";
+import axios from "axios";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
-interface User {
-    name: string,
-    email: string,
-    level: number
-}
+type AuthStatus = 'authenticated' | 'configuring' | 'unauthenticated';
 
 interface AuthContextType {
     user: User | null,
-    access_token: string,
-    isLoading: boolean,
-    login: (data: LoginFormData, level: number) => Promise<void>
+    login: (data: LoginFormData) => Promise<User>,
+    authStatus: AuthStatus
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null)
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
-    const [token, setToken] = useState<string>('');
-    const [loading, setLoading] = useState(false);
+    const [authStatus, setAuthStatus] = useState<AuthStatus>('configuring');
 
-    async function login(data: LoginFormData, level: number) {
-        setLoading(true);
-
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        setUser({...data, level, name:'adi'});
-        setLoading(false);
-        return;
-        
+    async function login(data: LoginFormData) {
+        try {
+            const response = await axios.post('/auth/login', data);
+            setUser(response.data.user);
+            const access_token = response.data.access_token as string;
+            localStorage.setItem('token', access_token);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
+            setAuthStatus('authenticated');
+            return response.data.user as User;
+        } catch (error) {
+            throw error;
+        }
     }
 
+    function checkUser() {
+        setAuthStatus('configuring')
+        axios.post('auth/user').then((res) => {
+            setUser(res.data as User)
+            setAuthStatus('authenticated');
+        }).catch(e => {
+            console.error(e)
+            setAuthStatus('unauthenticated');
+        })
+        .finally(() => {
+        })
+    }
+
+    useEffect(() => {
+        checkUser();
+    }, []);
+
     return (
-        <AuthContext.Provider value={{ user, access_token: token, login, isLoading: loading }}>
+        <AuthContext.Provider value={{ user, login, authStatus}}>
             {children}
         </AuthContext.Provider>
     )

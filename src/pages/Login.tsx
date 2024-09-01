@@ -4,10 +4,12 @@ import Button from "@/components/Button";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthProvider";
 import { LoginFormData } from "@/types";
+import Swal from 'sweetalert2';
+import Loading from "@/components/Loading";
 
 const LoginFormSchema = yup.object().shape({
   email: yup.string().email().required(),
@@ -15,6 +17,7 @@ const LoginFormSchema = yup.object().shape({
 })
 
 export default function Login() {
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from || "/";
@@ -23,43 +26,56 @@ export default function Login() {
     resolver: yupResolver(LoginFormSchema)
   });
 
+
+
   function onSubmit(data: LoginFormData) {
-    console.log(data);
-    auth.login({
-      email: 'adi',
-      password:'ass'
-    }, 0).then(() => {
+    setLoading(true);
+    auth.login(data).then((user) => {
+      Swal.fire({
+        title: "Login Berhasil",
+        text: "Selamat datang, " + user.nama + '!',
+        icon: 'success'
+      });
       navigate(from, { replace: true });
+    }).catch(() => {
+      Swal.fire({
+        title: "Login Gagal",
+        text: "Silahkan perika kembali email dan password",
+        icon: 'error'
+      });
     })
-    
+    .finally(() => setLoading(false));
   }
 
   useEffect(() => {
     document.title = "Login";
   }, [])
 
-  return (
-    <div className="min-h-screen w-full flex items-center justify-center">
-      <div className="flex md:max-w-2xl flex-col md:flex-row rounded-lg shadow-xl w-full">
-        <div className="w-full flex items-center justify-center">
-          <img src={LoginIllustration} className="max-w-md" alt="Login Illustration" />
-        </div>
-        <div className="w-full flex flex-col p-5">
-          <h1 className="font-bold text-2xl mb-5">Login</h1>
-          <p className="text-gray-500 mb-4">Silahkan masukkan email dan password untuk login</p>
-          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
-            <div className="mb-3">
-              <TextInput name="email" label="Email" placeholder="Masukkan Email" register={register} error={errors.email?.message} />
-            </div>
-            <div className="mb-3">
-              <TextInput type="password" name="password" label="Password" placeholder="Masukkan Password" register={register} error={errors.password?.message} />
-            </div>
-            <Button type="submit" disabled={auth?.isLoading}>{ auth?.isLoading ? 'Loading...' : 'Login' }</Button>
-          </form>
+  if (auth.authStatus == 'configuring') {
+    return <Loading />
+  } else {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center">
+        <div className="flex md:max-w-2xl flex-col md:flex-row rounded-lg shadow-xl w-full">
+          <div className="w-full flex items-center justify-center">
+            <img src={LoginIllustration} className="max-w-md" alt="Login Illustration" />
+          </div>
+          <div className="w-full flex flex-col p-5">
+            <h1 className="font-bold text-2xl mb-5">Login</h1>
+            <p className="text-gray-500 mb-4">Silahkan masukkan email dan password untuk login</p>
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+              <div className="mb-3">
+                <TextInput name="email" label="Email" placeholder="Masukkan Email" register={register} error={errors.email?.message} />
+              </div>
+              <div className="mb-3">
+                <TextInput type="password" name="password" label="Password" placeholder="Masukkan Password" register={register} error={errors.password?.message} />
+              </div>
+              <Button type="submit" disabled={loading}>{ loading ? 'Sedang login...' : 'Login' }</Button>
+            </form>
+          </div>
         </div>
       </div>
-
-
-    </div>
-  );
+    );
+  }
+  
 }

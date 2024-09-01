@@ -15,7 +15,7 @@ export interface User {
     level: number
 }
 
-export type AddVerificatorFormData = {
+export type AddVerifikatorFormData = {
     nama: string;
     email: string;
     tempat_lahir: string;
