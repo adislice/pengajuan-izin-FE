@@ -1,12 +1,14 @@
 import Loading from "@/components/Loading";
 import Navbar from "@/components/Navbar";
 import { useAuth } from "@/context/AuthProvider"
+import { ReactNode } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 interface ProtectedRouteProps {
-  allowedUserLevel: number[]
+  allowedUser: number[],
+  children: ReactNode
 }
-export default function ProtectRoute({ allowedUserLevel }: ProtectedRouteProps) {
+export default function ProtectRoute({ allowedUser, children }: ProtectedRouteProps) {
   const auth = useAuth();
   const location = useLocation();
 
@@ -16,19 +18,11 @@ export default function ProtectRoute({ allowedUserLevel }: ProtectedRouteProps) 
     return <Navigate to={'/login'} replace state={{ from: location }} />
   } 
 
-  if (allowedUserLevel.includes(auth.user.level)) {
+  if (allowedUser.includes(auth.user.level)) {
     return (
-      <div className="flex flex-col w-full min-h-screen bg-blue-100">
-        <Navbar />
-        <div className="flex flex-row w-full flex-1">
-          <Outlet />
-        </div>
-      </div>
+      children
     )
   } else {
     return <h1>You don't have permission</h1>;
   }
-
-
-
 }

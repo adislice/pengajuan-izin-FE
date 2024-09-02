@@ -9,6 +9,7 @@ import IzinList from '@/pages/IzinList'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import { useEffect } from 'react'
+import Layout from '@/components/Layout'
 
 function App() {
   const navigate = useNavigate();
@@ -34,10 +35,10 @@ function App() {
   return (
     <Routes>
       <Route path='/login' element={<Login />} />
-      <Route path='/' element={<ProtectRoute allowedUserLevel={[0, 1]} />}>
+      <Route path='/' element={<Layout />}>
         <Route path='' element={<Dashboard />} />
-        <Route path='user' element={<UserList />} />
-        <Route path='izin' element={<IzinList />} />
+        <Route path='user' element={<ProtectRoute allowedUser={[0,1]}><UserList /></ProtectRoute>} />
+        <Route path='izin' element={<ProtectRoute allowedUser={[0,1,2]}><IzinList /></ProtectRoute>} />
       </Route>
     </Routes>
   )
