@@ -1,3 +1,4 @@
+import AddIzinModal from "@/components/AddIzinModal";
 import Button from "@/components/Button";
 import DetailIzinModal from "@/components/DetailIzinModal";
 import { Dropdown } from "@/components/Dropdown";
@@ -134,9 +135,9 @@ export default function IzinList() {
           </div>
         </div>
       </div>
-      {/* {isAddVerifModalOpen && (
-        <AddVerifikatorModal onCloseClicked={() => setIsAddVerifModalOpen(false)} />
-      )} */}
+      {isAddIzinModalOpen && (
+        <AddIzinModal onCloseClicked={() => setIsAddIzinModalOpen(false)} onSuccess={fetchIzin} />
+      )}
 
       {isDetailModalOpen && <DetailIzinModal id={currentId}
         onCloseClicked={() => setIsDetailModalOpen(false)}

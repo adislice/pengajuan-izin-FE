@@ -39,3 +39,10 @@ export type AddVerifikatorFormData = {
     alamat: string;
     password: string;
 }
+
+export type AddIzinFormData = {
+    tanggal_selesai?: string | null | undefined;
+    tanggal_mulai: string;
+    jenis_izin: string;
+    alasan: string;
+}
