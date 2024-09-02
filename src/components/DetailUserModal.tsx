@@ -28,8 +28,10 @@ export default function DetailUserModal({ id, onCloseClicked, shouldRefresh }: D
         text: err.message,
         icon: 'error'
       });
+      onCloseClicked();
     }).finally(() => Swal.close())
   }
+
   useEffect(() => {
     fetchUserDetail();
   }, [id])

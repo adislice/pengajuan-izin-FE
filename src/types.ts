@@ -16,6 +16,20 @@ export interface User {
     verified_at?: string
 }
 
+export interface Izin {
+    id: number
+    user_id: number
+    tanggal_mulai: string
+    tanggal_selesai: string
+    jenis_izin: string
+    alasan: string
+    komentar: any
+    status: string
+    created_at: string
+    updated_at: string
+    user: User
+  }
+
 export type AddVerifikatorFormData = {
     nama: string;
     email: string;

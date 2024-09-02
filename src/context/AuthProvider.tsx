@@ -44,7 +44,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     useEffect(() => {
-        checkUser();
+        if (localStorage.getItem('token')) {
+            checkUser();
+        } else {
+            setAuthStatus('unauthenticated');
+        }
     }, []);
 
     return (
