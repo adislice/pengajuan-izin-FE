@@ -4,6 +4,7 @@ import DetailUserModal from "@/components/DetailUserModal";
 import Pagination from "@/components/Pagination";
 import { Table, TableBody, TableData, TableHead, TableHeader, TableRow } from "@/components/Table";
 import { useAuth } from "@/context/AuthProvider";
+import useDocumentTitle from "@/hooks/useDocumentTitle";
 import { getAllUser } from "@/services/userService";
 import { User } from "@/types";
 import { ucfirst } from "@/utils/helper";
@@ -23,6 +24,7 @@ export default function UserList() {
   const [verifiedFilter, setVerifiedFilter] = useState<FilterVerified>('all');
   const [filterOpen, setFilterOpen] = useState(false);
   const auth = useAuth();
+  useDocumentTitle("Daftar User");
 
   function fetchUser() {
     const page = currentPage;

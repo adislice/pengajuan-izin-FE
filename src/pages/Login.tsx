@@ -10,6 +10,7 @@ import { useAuth } from "@/context/AuthProvider";
 import { LoginFormData } from "@/types";
 import Swal from 'sweetalert2';
 import Loading from "@/components/Loading";
+import useDocumentTitle from "@/hooks/useDocumentTitle";
 
 const LoginFormSchema = yup.object().shape({
   email: yup.string().email().required(),
@@ -25,8 +26,7 @@ export default function Login() {
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
     resolver: yupResolver(LoginFormSchema)
   });
-
-
+  useDocumentTitle("Login");
 
   function onSubmit(data: LoginFormData) {
     setLoading(true);
@@ -46,10 +46,6 @@ export default function Login() {
     })
     .finally(() => setLoading(false));
   }
-
-  useEffect(() => {
-    document.title = "Login";
-  }, [])
 
   if (auth.authStatus == 'configuring') {
     return <Loading />

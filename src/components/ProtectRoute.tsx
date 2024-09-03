@@ -1,5 +1,6 @@
 import Loading from "@/components/Loading";
 import Navbar from "@/components/Navbar";
+import UnauthorizedAccess from "@/components/UnauthorizedAccess";
 import { useAuth } from "@/context/AuthProvider"
 import { ReactNode } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
@@ -23,6 +24,6 @@ export default function ProtectRoute({ allowedUser, children }: ProtectedRoutePr
       children
     )
   } else {
-    return <h1>You don't have permission</h1>;
+    return <UnauthorizedAccess />;
   }
 }

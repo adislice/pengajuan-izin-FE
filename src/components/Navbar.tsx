@@ -20,11 +20,13 @@ export default function Navbar() {
                 <HouseIcon size={22} />Dashboard
               </NavLinkActive>
             </li>
-            <li>
-              <NavLinkActive to="/user">
-                <UserIcon size={22} />Data User
-              </NavLinkActive>
-            </li>
+            {auth.user?.level != 2 && (
+              <li>
+                <NavLinkActive to="/user">
+                  <UserIcon size={22} />Data User
+                </NavLinkActive>
+              </li>
+            )}
             <li>
               <NavLinkActive to="/izin">
                 <FileTextIcon size={22} />Data Izin
