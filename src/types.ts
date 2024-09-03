@@ -46,3 +46,5 @@ export type AddIzinFormData = {
     jenis_izin: string;
     alasan: string;
 }
+
+export type EditIzinFormData = AddIzinFormData;

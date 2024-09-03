@@ -2,12 +2,15 @@ import AddIzinModal from "@/components/AddIzinModal";
 import Button from "@/components/Button";
 import DetailIzinModal from "@/components/DetailIzinModal";
 import { Dropdown } from "@/components/Dropdown";
+import EditIzinModal from "@/components/EditIzinModal";
 import Pagination from "@/components/Pagination";
 import { Table, TableBody, TableData, TableHead, TableHeader, TableRow } from "@/components/Table";
 import { useAuth } from "@/context/AuthProvider";
-import { getAllIzin } from "@/services/izinService";
+import useDocumentTitle from "@/hooks/useDocumentTitle";
+import { deleteIzin, getAllIzin } from "@/services/izinService";
 import { Izin, User } from "@/types";
 import { ucfirst } from "@/utils/helper";
+import { EyeIcon, SquarePenIcon, Trash2Icon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import Swal from 'sweetalert2';
 
@@ -16,12 +19,14 @@ type FilterStatus = '' | 'diajukan' | 'direvisi' | 'diterima' | 'ditolak';
 export default function IzinList() {
   const [isAddIzinModalOpen, setIsAddIzinModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentId, setCurrentId] = useState(0);
   const [pagination, setPagination] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState('');
   const [izins, setIzins] = useState<Izin[]>([]);
   const [filter, setFilter] = useState<FilterStatus>('');
   const auth = useAuth();
+  useDocumentTitle('Daftar Izin');
 
   function fetchIzin() {
     const page = currentPage;
@@ -32,9 +37,32 @@ export default function IzinList() {
       Swal.fire({
         title: "Kesalahan",
         text: err.message,
-        icon: 'error'
+        icon: "error"
       });
     });
+  }
+
+  function handleDelete() {
+    Swal.fire({
+      title: "Hapus Data?",
+      text: "Anda yakin ingin menghapus data ini?",
+      icon: "warning",
+      showCancelButton: true,
+      showConfirmButton: true,
+    }).then(res => {
+      if (res.isConfirmed) {
+        Swal.fire({title: "Menghapus..."});
+        Swal.showLoading();
+        deleteIzin(currentId).then(() => {
+          Swal.fire({
+            title: "Sukses",
+            text: "Data berhasil dihapus",
+            icon: "success"
+          });
+          fetchIzin();
+        })
+      }
+    })
   }
 
   useEffect(() => {
@@ -114,12 +142,28 @@ export default function IzinList() {
                     </span>
                   </TableData>
                   <TableData>
+                    <div className="flex gap-2">
                     <button onClick={() => {
                       setIsDetailModalOpen(true);
-                      setCurrentId(izin.id)
-                    }} className="text-blue-600 hover:underline">
-                      Lihat
+                      setCurrentId(izin.id);
+                    }} className="text-blue-600 font-medium hover:underline inline-flex items-center gap-0.5">
+                      <EyeIcon size={16} />Lihat
                     </button>
+                    {['diajukan', 'direvisi'].includes(izin.status) && (
+                      <button onClick={() => {
+                      setIsEditModalOpen(true);
+                      setCurrentId(izin.id);
+                    }} className="text-yellow-600 font-medium hover:underline inline-flex items-center gap-0.5">
+                      <SquarePenIcon size={16} />Edit
+                    </button>
+                  )}
+                    <button onClick={() => {
+                      setCurrentId(izin.id);
+                      handleDelete();
+                    }} className="text-red-600 font-medium hover:underline inline-flex items-center gap-0.5">
+                      <Trash2Icon size={16} />Hapus
+                    </button>
+                    </div>
                   </TableData>
                 </TableRow>
               ))}
@@ -137,6 +181,10 @@ export default function IzinList() {
       </div>
       {isAddIzinModalOpen && (
         <AddIzinModal onCloseClicked={() => setIsAddIzinModalOpen(false)} onSuccess={fetchIzin} />
+      )}
+
+      {isEditModalOpen && (
+        <EditIzinModal id={currentId} onCloseClicked={() => setIsEditModalOpen(false)} onSuccess={fetchIzin} />
       )}
 
       {isDetailModalOpen && <DetailIzinModal id={currentId}

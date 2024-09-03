@@ -1,8 +1,8 @@
 import Button from "@/components/Button";
 import { Modal } from "@/components/Modal";
-import TextInput from "@/components/TextInput";
 import { useAuth } from "@/context/AuthProvider";
-import { acceptIzin, getIzin, rejectIzin, reviseIzin } from "@/services/izinService";
+import useDocumentTitle from "@/hooks/useDocumentTitle";
+import { acceptIzin, cancelIzin, getIzin, rejectIzin, reviseIzin } from "@/services/izinService";
 import { Izin } from "@/types";
 import { ucfirst } from "@/utils/helper";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -29,12 +29,14 @@ export default function DetailIzinModal({ id, onCloseClicked, shouldRefresh }: D
     resolver: yupResolver(KomentarSchema),
     mode: 'onChange'
   });
+  useDocumentTitle('Detail Izin');
 
   function fetchIzinDetail() {
     Swal.fire({ title: 'Loading...' });
     Swal.showLoading();
     getIzin(id).then(data => {
       setIzin(data);
+      Swal.close()
     }).catch(err => {
       Swal.fire({
         title: 'Kesalahan',
@@ -42,7 +44,7 @@ export default function DetailIzinModal({ id, onCloseClicked, shouldRefresh }: D
         icon: 'error'
       });
       onCloseClicked();
-    }).finally(() => Swal.close())
+    });
   }
 
   useEffect(() => {
@@ -152,6 +154,38 @@ export default function DetailIzinModal({ id, onCloseClicked, shouldRefresh }: D
     })
   }
 
+  function batalkanIzin() {
+    if (!izin) return;
+    Swal.fire({
+      title: "Anda Yakin?",
+      text: "Apakah Anda yakin ingin membatalkan izin ini?",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yakin'
+    }).then(res => {
+      if (res.isConfirmed) {
+        Swal.fire({ title: "Loading..." })
+        Swal.showLoading();
+        cancelIzin(izin?.id).then(() => {
+          Swal.fire({
+            title: 'Sukses',
+            text: "Berhasil membatalkan izin",
+            icon: 'success',
+          }).then(() => {
+            fetchIzinDetail();
+            shouldRefresh();
+          });
+        }).catch(err => {
+          Swal.fire({
+            title: "Kesalahan",
+            text: "Gagal membatalkan izin",
+            icon: "error"
+          })
+        })
+      }
+    });
+  }
+
   return izin ? (
     <Modal>
       <div className="flex items-center justify-center h-full w-full">
@@ -188,21 +222,34 @@ export default function DetailIzinModal({ id, onCloseClicked, shouldRefresh }: D
                 {ucfirst(izin.status)}
               </div>
             </div>
-            <hr />
-            <div className="mt-4">
-              <div className="font-semibold  text-gray-700">ACC/Tolak/Minta Revisi</div>
-              <div className="font-semibold text-sm text-gray-500">Komentar</div>
-              <textarea id="message" rows={3} {...register('komentar')} value={izin.komentar} disabled={izin.status == 'diterima' || izin.status == 'ditolak' || auth.user?.level != 1} className="block p-2.5 w-full text-sm rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 shadow-sm focus:outline-none focus:ring-1" ></textarea>
-                { errors.komentar?.message && <p className="text-red-500 text-sm">{ ucfirst(errors.komentar?.message ) }</p>}
-              {(izin.status == 'diajukan' || izin.status == 'direvisi' || auth.user?.level != 1) && (
-                <div className="flex my-2 gap-1 justify-stretch">
-                <Button onClick={accIzin} className="bg-green-500 hover:bg-green-600 flex-1">ACC</Button>
-                <Button onClick={tolakIzin} className="bg-red-500 hover:bg-red-600 flex-1">Tolak</Button>
-                <Button onClick={revisiIzin} className="flex-1">Minta Revisi</Button>
+            {izin.komentar && (
+              <div className="mb-3">
+                <div className="font-semibold text-sm text-gray-500">Komentar</div>
+                <p>{izin.komentar}</p>
               </div>
-              )}
-            </div>
+            )}
 
+            {(['diajukan', 'direvisi'].includes(izin.status) && auth.user?.level == 2) && (
+              <Button className="bg-red-500 hover:bg-red-600" onClick={batalkanIzin}>Batalkan</Button>
+            )}
+
+            {(['diajukan', 'direvisi'].includes(izin.status) && auth.user?.level == 1) && (<>
+              <hr />
+              <div className="mt-4">
+                <div className="font-semibold  text-gray-700">ACC/Tolak/Minta Revisi</div>
+                <div className="font-semibold text-sm text-gray-500">Komentar</div>
+                <textarea id="message" rows={3} {...register('komentar')} disabled={izin.status == 'diterima' || izin.status == 'ditolak' || auth.user?.level != 1} className="block p-2.5 w-full text-sm rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 shadow-sm focus:outline-none focus:ring-1" >{izin.komentar}</textarea>
+                {errors.komentar?.message && <p className="text-red-500 text-sm">{ucfirst(errors.komentar?.message)}</p>}
+                
+                  <div className="flex my-2 gap-1 justify-stretch">
+                    <Button onClick={accIzin} className="bg-green-500 hover:bg-green-600 flex-1">ACC</Button>
+                    <Button onClick={tolakIzin} className="bg-red-500 hover:bg-red-600 flex-1">Tolak</Button>
+                    <Button onClick={revisiIzin} className="flex-1">Minta Revisi</Button>
+                  </div>
+                
+              </div>
+            </>
+            )}
           </div>
         </div>
       </div>

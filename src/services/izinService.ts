@@ -1,4 +1,4 @@
-import { AddIzinFormData } from "@/types";
+import { AddIzinFormData, EditIzinFormData } from "@/types";
 import { parseErrors } from "@/utils/helper";
 import axios, { AxiosError } from "axios";
 
@@ -62,5 +62,56 @@ export async function createIzin(body: AddIzinFormData) {
             }
         }
         throw new Error("Gagal menambah izin!");
+    }
+}
+
+export async function updateIzin(id:number, body: EditIzinFormData) {
+    try {
+        const res = await axios.put(`izin/${id}`, body);
+        return res.data;
+    } catch (err) {
+        if (err instanceof AxiosError) {
+            if (err.response?.status == 422) {
+                const errorsMsg = parseErrors(err.response?.data.errors)
+                throw new Error(errorsMsg);
+            } else if (err.response?.data.message) {
+                throw new Error(err.response?.data.message);
+            }
+        }
+        throw new Error("Gagal mengubah izin!");
+    }
+}
+
+export async function deleteIzin(id:number) {
+    try {
+        const res = await axios.delete(`izin/${id}`);
+        return res.data;
+    } catch (err) {
+        if (err instanceof AxiosError) {
+            if (err.response?.status == 422) {
+                const errorsMsg = parseErrors(err.response?.data.errors)
+                throw new Error(errorsMsg);
+            } else if (err.response?.data.message) {
+                throw new Error(err.response?.data.message);
+            }
+        }
+        throw new Error("Gagal menghapus izin!");
+    }
+}
+
+export async function cancelIzin(id:number) {
+    try {
+        const res = await axios.put(`izin/${id}/cancel`);
+        return res.data;
+    } catch (err) {
+        if (err instanceof AxiosError) {
+            if (err.response?.status == 422) {
+                const errorsMsg = parseErrors(err.response?.data.errors)
+                throw new Error(errorsMsg);
+            } else if (err.response?.data.message) {
+                throw new Error(err.response?.data.message);
+            }
+        }
+        throw new Error("Gagal membatalkan izin!");
     }
 }

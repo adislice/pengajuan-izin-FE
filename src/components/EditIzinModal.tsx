@@ -1,40 +1,46 @@
 import Button from "@/components/Button";
 import { Modal } from "@/components/Modal";
 import TextInput from "@/components/TextInput";
-import { AddIzinFormData } from "@/types";
+import { EditIzinFormData, Izin } from "@/types";
 import { ucfirst } from "@/utils/helper";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { XIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import * as yup from 'yup';
 import Swal from 'sweetalert2';
-import { createIzin } from "@/services/izinService";
+import { createIzin, getIzin, updateIzin } from "@/services/izinService";
 import Select from "@/components/Select";
+import { useEffect, useMemo, useState } from "react";
+import useDocumentTitle from "@/hooks/useDocumentTitle";
 
-interface AddIzinModalProps {
+interface EditIzinProps {
+  id: number,
   onCloseClicked: () => void,
   onSuccess: () => void
 }
 
-const AddIzinSchema = yup.object().shape({
+const EditIzinSchema = yup.object().shape({
   tanggal_mulai: yup.string().required(),
   tanggal_selesai: yup.string().nullable().optional(),
   jenis_izin: yup.string().required(),
   alasan: yup.string().required(),
 })
 
-export default function AddIzinModal({ onCloseClicked, onSuccess }: AddIzinModalProps) {
-  const { register, handleSubmit, formState: { errors } } = useForm<AddIzinFormData>({
-    resolver: yupResolver(AddIzinSchema)
+export default function EditIzinModal({ id, onCloseClicked, onSuccess }: EditIzinProps) {
+  const [izin, setIzin] = useState<Izin | undefined>();
+  const [loading, setLoading] = useState(true);
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<EditIzinFormData>({
+    resolver: yupResolver(EditIzinSchema),
   });
+  useDocumentTitle('Edit Izin');
 
-  function onSubmit(data: AddIzinFormData) {
+  function onSubmit(data: EditIzinFormData) {
     Swal.fire("Menyimpan data...")
     Swal.showLoading()
-    createIzin(data).then(_res => {
+    updateIzin(id, data).then(_res => {
       Swal.fire({
         title: 'Sukses',
-        text: "Berhasil menambah izin",
+        text: "Berhasil mengedit izin",
         icon: 'success'
       }).then((result) => {
         if (result.isConfirmed) {
@@ -51,12 +57,29 @@ export default function AddIzinModal({ onCloseClicked, onSuccess }: AddIzinModal
     });
   }
 
-  return (
+  useEffect(() => {
+    Swal.fire({ title: 'Loading...' });
+    Swal.showLoading();
+    getIzin(id).then(data => {
+      setIzin(data);
+      reset(data);
+      Swal.close();
+    }).catch(err => {
+      Swal.fire({
+        title: 'Kesalahan',
+        text: err.message,
+        icon: 'error'
+      });
+      onCloseClicked();
+    }).finally(() => setLoading(false));
+  }, [id])
+
+  return loading ? null : (
     <Modal>
       <div className="flex items-center justify-center h-full w-full">
         <div className="bg-white flex flex-col rounded-lg w-full max-w-xl max-h-[calc(100vh-2rem)]">
           <div className="p-4 border-b flex items-center justify-between">
-            <h1 className="font-bold">Tambah Izin</h1>
+            <h1 className="font-bold">Edit Izin</h1>
             <button onClick={onCloseClicked} className="p-1 hover:bg-gray-200 rounded-full"><XIcon size={20} /></button>
           </div>
           <div className="grow overflow-y-auto p-4">

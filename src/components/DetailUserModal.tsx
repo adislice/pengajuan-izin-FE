@@ -22,6 +22,7 @@ export default function DetailUserModal({ id, onCloseClicked, shouldRefresh }: D
     Swal.showLoading();
     getUser(id).then(data => {
       setUser(data);
+      Swal.close()
     }).catch(err => {
       Swal.fire({
         title: 'Kesalahan',
@@ -29,7 +30,7 @@ export default function DetailUserModal({ id, onCloseClicked, shouldRefresh }: D
         icon: 'error'
       });
       onCloseClicked();
-    }).finally(() => Swal.close())
+    });
   }
 
   useEffect(() => {
