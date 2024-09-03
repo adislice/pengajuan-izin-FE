@@ -7,6 +7,7 @@ type AuthStatus = 'authenticated' | 'configuring' | 'unauthenticated';
 interface AuthContextType {
     user: User | null,
     login: (data: LoginFormData) => Promise<User>,
+    logout: () => Promise<void>,
     authStatus: AuthStatus
 }
 
@@ -28,6 +29,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         } catch (error) {
             throw error;
         }
+    }
+
+    async function logout() {
+        try {
+            setAuthStatus('configuring');
+            await axios.post('/auth/logout');
+            localStorage.removeItem('token');
+            setUser(null);
+            setAuthStatus('unauthenticated');
+            axios.defaults.headers.common['Authorization'] = null;
+        } catch (error) {}
     }
 
     function checkUser() {
@@ -52,7 +64,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user, login, authStatus}}>
+        <AuthContext.Provider value={{ user, login, logout, authStatus}}>
             {children}
         </AuthContext.Provider>
     )
