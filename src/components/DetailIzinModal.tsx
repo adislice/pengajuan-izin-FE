@@ -242,9 +242,9 @@ export default function DetailIzinModal({ id, onCloseClicked, shouldRefresh }: D
                 {errors.komentar?.message && <p className="text-red-500 text-sm">{ucfirst(errors.komentar?.message)}</p>}
                 
                   <div className="flex my-2 gap-1 justify-stretch">
-                    <Button onClick={accIzin} className="bg-green-500 hover:bg-green-600 flex-1">ACC</Button>
-                    <Button onClick={tolakIzin} className="bg-red-500 hover:bg-red-600 flex-1">Tolak</Button>
-                    <Button onClick={revisiIzin} className="flex-1">Minta Revisi</Button>
+                    <Button onClick={accIzin} className="bg-green-500 hover:bg-green-600 flex-1 basis-40">ACC</Button>
+                    <Button onClick={tolakIzin} className="bg-red-500 hover:bg-red-600 flex-1 basis-40">Tolak</Button>
+                    <Button onClick={revisiIzin} className="flex-1 basis-40">Minta Revisi</Button>
                   </div>
                 
               </div>

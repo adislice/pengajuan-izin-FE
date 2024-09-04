@@ -53,13 +53,13 @@ export default function UserList() {
 
   return (
     <div className="flex w-full mx-auto bg-gray-100">
-      <div className="w-4/5 flex flex-col px-10 py-8 mx-auto">
-        <div className="flex">
+      <div className="w-full md:w-4/5 flex flex-col px-6 py-6 md:px-10 md:py-8 mx-auto">
+        <div className="flex items-center">
           <div>
             <h1 className="text-xl font-bold">Daftar User</h1>
             <p className="text-gray-500">Kelola data user terdaftar</p>
           </div>
-          <div className="ms-auto">
+          <div className="ms-auto shrink-0">
             {auth.user?.level == 0 &&
               <Button onClick={() => setIsAddVerifModalOpen(true)}>Tambah Verifikator</Button>
             }

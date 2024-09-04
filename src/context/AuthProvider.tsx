@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     async function logout() {
         try {
             setAuthStatus('configuring');
-            await axios.post('/auth/logout');
+            axios.post('/auth/logout');
             localStorage.removeItem('token');
             setUser(null);
             setAuthStatus('unauthenticated');

@@ -42,7 +42,7 @@ export default function Profil() {
 
   return (
     <div className="flex w-full mx-auto bg-gray-100">
-      <div className="w-4/5 flex flex-col px-10 py-8 mx-auto">
+      <div className="w-full md:w-4/5 flex flex-col px-6 py-6 md:px-10 md:py-8 mx-auto">
         <div className="flex">
           <div>
             <h1 className="text-xl font-bold">Profil</h1>

@@ -33,7 +33,7 @@ export default function Dashboard() {
   }, []);
   return (
     <div className="flex w-full mx-auto bg-gray-100">
-      <div className="w-4/5 flex flex-col px-10 py-8 mx-auto">
+      <div className="w-full md:w-4/5 flex flex-col px-6 py-6 md:px-10 md:py-8 mx-auto">
         <div className="flex">
           <div>
             <h1 className="text-xl font-bold">Dashboard</h1>
@@ -90,7 +90,7 @@ export default function Dashboard() {
                 ></path>
               </svg>
               <div className="font-semibold">{userText}</div>
-              <p className="text-gray-500">{dashboardStat?.user_count}</p>
+              <p className="text-gray-500">{dashboardStat?.user_count ?? '0'}</p>
             </Link>
           )}
 
@@ -115,7 +115,7 @@ export default function Dashboard() {
               ></path>
             </svg>
             <div className="font-semibold">{izinText}</div>
-            <p className="text-gray-500">{dashboardStat?.izin_count}</p>
+            <p className="text-gray-500">{dashboardStat?.izin_count ?? '0'}</p>
           </Link>
         </div>
       </div>

@@ -37,17 +37,17 @@ export default function Navbar() {
   }
   return (
     <header className="antialiased flex shadow bg-white z-10">
-      <nav className="w-full container mx-auto h-16 flex items-center justify-center">
+      <nav className="w-full px-5 md:px-0 container mx-auto h-16 flex items-center justify-center">
         <a href="https://flowbite.com" className="flex mr-4">
           <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
             Adi Shop
           </span>
         </a>
         <div className="flex-grow flex items-center gap-2">
-          <ul className="flex gap-2 ms-auto">
+          <ul className="flex flex-row gap-2 ms-auto fixed md:relative bottom-0 left-0 bg-white w-full md:w-unset justify-around md:justify-end">
             <li>
               <NavLinkActive to="/">
-                <HouseIcon size={22} />Dashboard
+                  <HouseIcon size={22} />Dashboard
               </NavLinkActive>
             </li>
             {auth.user?.level != 2 && (
@@ -63,10 +63,10 @@ export default function Navbar() {
               </NavLinkActive>
             </li>
           </ul>
-          <div className="relative">
-            <button 
-            onClick={() => setUserDropdownOpen(state => !state)}
-            className="bg-blue-400 text-white h-10 w-10 rounded-full flex items-center justify-center hover:bg-blue-500">
+          <div className="relative ms-auto">
+            <button
+              onClick={() => setUserDropdownOpen(state => !state)}
+              className="bg-blue-400 text-white h-10 w-10 rounded-full flex items-center justify-center hover:bg-blue-500">
               {ucfirst(auth.user?.nama.charAt(0) ?? '')}
             </button>
             {userDropdownOpen && (

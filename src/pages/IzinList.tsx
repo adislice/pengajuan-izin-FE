@@ -42,7 +42,7 @@ export default function IzinList() {
     });
   }
 
-  function handleDelete() {
+  function handleDelete(id:number) {
     Swal.fire({
       title: "Hapus Data?",
       text: "Anda yakin ingin menghapus data ini?",
@@ -53,7 +53,7 @@ export default function IzinList() {
       if (res.isConfirmed) {
         Swal.fire({title: "Menghapus..."});
         Swal.showLoading();
-        deleteIzin(currentId).then(() => {
+        deleteIzin(id).then(() => {
           Swal.fire({
             title: "Sukses",
             text: "Data berhasil dihapus",
@@ -76,7 +76,7 @@ export default function IzinList() {
       }
     }
 
-    setIsAddIzinModalOpen(false)
+    setIsAddIzinModalOpen(true)
   }
 
   useEffect(() => {
@@ -85,13 +85,13 @@ export default function IzinList() {
 
   return (
     <div className="flex w-full mx-auto bg-gray-100">
-      <div className="w-4/5 flex flex-col px-10 py-8 mx-auto">
-        <div className="flex">
+      <div className="w-full md:w-4/5 flex flex-col px-6 py-6 md:px-10 md:py-8 mx-auto">
+        <div className="flex items-center">
           <div>
             <h1 className="text-xl font-bold">Daftar Izin</h1>
             <p className="text-gray-500">Kelola data izin yang diajukan</p>
           </div>
-          <div className="ms-auto">
+          <div className="ms-auto shrink-0">
             {auth.user?.level == 2 &&
               <Button onClick={handleAddIzinModal}>Ajukan Izin</Button>
             }
@@ -163,7 +163,7 @@ export default function IzinList() {
                     }} className="text-blue-600 font-medium hover:underline inline-flex items-center gap-0.5">
                       <EyeIcon size={16} />Lihat
                     </button>
-                    {['diajukan', 'direvisi'].includes(izin.status) && (
+                    {(['diajukan', 'direvisi'].includes(izin.status) && auth.user?.level == 2) && (
                       <button onClick={() => {
                       setIsEditModalOpen(true);
                       setCurrentId(izin.id);
@@ -173,7 +173,7 @@ export default function IzinList() {
                   )}
                     <button onClick={() => {
                       setCurrentId(izin.id);
-                      handleDelete();
+                      handleDelete(izin.id);
                     }} className="text-red-600 font-medium hover:underline inline-flex items-center gap-0.5">
                       <Trash2Icon size={16} />Hapus
                     </button>
