@@ -139,8 +139,12 @@ export default function DetailUserModal({ id, onCloseClicked, shouldRefresh }: D
                 <button onClick={changeUserLevel} className="text-sm p-2 text-blue-600 rounded bg-blue-100">Ubah ke Verifikator</button>
               )}
             </div>
+            <div className="mb-3">
+              <div className="font-medium text-sm text-gray-500">Status Verifikasi</div>
+              <div><span className={`${user?.verified_at ? 'bg-green-500' : 'bg-yellow-500'} text-white rounded-lg px-2 text-sm py-0.5`}>{user?.verified_at ? 'Diverifikasi' : 'Belum Diverifikasi'}</span></div>
+            </div>
 
-            {!user.verified_at && (
+            {(!user.verified_at && auth.user?.level == 1) && (
               <div className="flex w-full justify-end">
                 <Button onClick={handleVerifyUser}>Verifikasi</Button>
               </div>

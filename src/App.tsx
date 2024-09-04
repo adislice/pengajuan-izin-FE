@@ -10,6 +10,7 @@ import Swal from 'sweetalert2'
 import { useEffect } from 'react'
 import Layout from '@/components/Layout'
 import Register from './pages/Register'
+import Profil from './pages/Profil'
 
 function App() {
   const navigate = useNavigate();
@@ -41,6 +42,7 @@ function App() {
         <Route path='' element={<Dashboard />} />
         <Route path='user' element={<ProtectRoute allowedUser={[0,1]}><UserList /></ProtectRoute>} />
         <Route path='izin' element={<ProtectRoute allowedUser={[0,1,2]}><IzinList /></ProtectRoute>} />
+        <Route path='profil' element={<ProtectRoute allowedUser={[0,1,2]}><Profil /></ProtectRoute>} />
       </Route>
     </Routes>
   )

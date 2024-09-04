@@ -71,7 +71,7 @@ export default function Navbar() {
             </button>
             {userDropdownOpen && (
               <div className="absolute w-40 bg-white flex flex-col shadow-lg rounded-md p-2 border right-0 top-full mt-1">
-                <Link to={'/'} className="px-2 py-1 text-start hover:bg-gray-100 rounded">Profil</Link>
+                <Link to={'/profil'} className="px-2 py-1 text-start hover:bg-gray-100 rounded">Profil</Link>
                 <button className="px-2 py-1 text-start hover:bg-gray-100 rounded" onClick={handleLogout}>Logout</button>
               </div>
             )}

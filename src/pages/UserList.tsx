@@ -8,7 +8,7 @@ import useDocumentTitle from "@/hooks/useDocumentTitle";
 import { getAllUser } from "@/services/userService";
 import { User } from "@/types";
 import { ucfirst } from "@/utils/helper";
-import { ChevronDownIcon } from "lucide-react";
+import { ChevronDownIcon, EyeIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import Swal from 'sweetalert2';
 
@@ -120,8 +120,8 @@ export default function UserList() {
                     <button onClick={() => {
                       setIsDetailModalOpen(true);
                       setCurrentId(user.id)
-                    }} className="text-blue-600 hover:underline">
-                      Lihat
+                    }} className="text-blue-600 font-medium hover:underline inline-flex items-center gap-0.5">
+                      <EyeIcon size={16} />Lihat
                     </button>
                   </TableData>
                 </TableRow>
