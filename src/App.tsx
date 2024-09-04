@@ -4,12 +4,12 @@ import Login from './pages/Login'
 import Dashboard from '@/pages/Dashboard'
 import ProtectRoute from '@/components/ProtectRoute'
 import UserList from '@/pages/UserList'
-import UserDetail from '@/pages/UserDetail'
 import IzinList from '@/pages/IzinList'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import { useEffect } from 'react'
 import Layout from '@/components/Layout'
+import Register from './pages/Register'
 
 function App() {
   const navigate = useNavigate();
@@ -27,14 +27,16 @@ function App() {
           if (res.isConfirmed) {
             navigate('/login');
           }
-        })
+        });
       }
+      throw error;
     })
   }, [navigate])
   
   return (
     <Routes>
       <Route path='/login' element={<Login />} />
+      <Route path='/register' element={<Register />} />
       <Route path='/' element={<Layout />}>
         <Route path='' element={<Dashboard />} />
         <Route path='user' element={<ProtectRoute allowedUser={[0,1]}><UserList /></ProtectRoute>} />

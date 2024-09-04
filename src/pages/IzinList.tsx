@@ -65,6 +65,20 @@ export default function IzinList() {
     })
   }
 
+  function handleAddIzinModal() {
+    if (auth.user?.level == 2) {
+      if (auth.user.verified_at == null) {
+        return Swal.fire({
+          title: "Kesalahan",
+          text: "Anda tidak bisa menambah izin karena akun Anda belum diverifikasi. Silahkan tunggu hingga verifikator memverifikasi akun Anda",
+          icon: 'error'
+        });
+      }
+    }
+
+    setIsAddIzinModalOpen(false)
+  }
+
   useEffect(() => {
     fetchIzin();
   }, [currentPage, filter])
@@ -79,7 +93,7 @@ export default function IzinList() {
           </div>
           <div className="ms-auto">
             {auth.user?.level == 2 &&
-              <Button onClick={() => setIsAddIzinModalOpen(true)}>Ajukan Izin</Button>
+              <Button onClick={handleAddIzinModal}>Ajukan Izin</Button>
             }
           </div>
         </div>

@@ -1,6 +1,7 @@
 import { LoginFormData, User } from "@/types";
 import axios from "axios";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import * as authService from '@/services/authService';
 
 type AuthStatus = 'authenticated' | 'configuring' | 'unauthenticated';
 
@@ -19,13 +20,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     async function login(data: LoginFormData) {
         try {
-            const response = await axios.post('/auth/login', data);
-            setUser(response.data.user);
-            const access_token = response.data.access_token as string;
+            const response = await authService.login(data);
+            setUser(response.user);
+            const access_token = response.access_token as string;
             localStorage.setItem('token', access_token);
             axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
             setAuthStatus('authenticated');
-            return response.data.user as User;
+            return response.user as User;
         } catch (error) {
             throw error;
         }

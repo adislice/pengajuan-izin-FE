@@ -48,3 +48,14 @@ export type AddIzinFormData = {
 }
 
 export type EditIzinFormData = AddIzinFormData;
+
+export type RegisterFormData = {
+    nama: string;
+    email: string;
+    jenis_kelamin: string,
+    tempat_lahir: string;
+    tanggal_lahir: string;
+    alamat: string;
+    password: string;
+    password_confirm: string;
+}

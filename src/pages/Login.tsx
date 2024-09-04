@@ -4,13 +4,14 @@ import Button from "@/components/Button";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthProvider";
 import { LoginFormData } from "@/types";
 import Swal from 'sweetalert2';
 import Loading from "@/components/Loading";
 import useDocumentTitle from "@/hooks/useDocumentTitle";
+import { ChevronRightIcon } from "lucide-react";
 
 const LoginFormSchema = yup.object().shape({
   email: yup.string().email().required(),
@@ -67,6 +68,7 @@ export default function Login() {
                 <TextInput type="password" name="password" label="Password" placeholder="Masukkan Password" register={register} error={errors.password?.message} />
               </div>
               <Button type="submit" disabled={loading}>{ loading ? 'Sedang login...' : 'Login' }</Button>
+              <p className="text-sm mt-2 flex">Belum punya akun? <Link to='/register' className="w-fit inline-flex items-center justify-center ms-1 rounded gap-1 text-blue-500 hover:underline">Register</Link></p>
             </form>
           </div>
         </div>

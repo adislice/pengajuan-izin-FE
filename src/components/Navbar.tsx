@@ -1,5 +1,6 @@
 import NavLinkActive from "@/components/NavLinkActive";
 import { useAuth } from "@/context/AuthProvider";
+import { ucfirst } from "@/utils/helper";
 import { FileTextIcon, HouseIcon, UserIcon } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -66,7 +67,7 @@ export default function Navbar() {
             <button 
             onClick={() => setUserDropdownOpen(state => !state)}
             className="bg-blue-400 text-white h-10 w-10 rounded-full flex items-center justify-center hover:bg-blue-500">
-              {auth.user?.nama.charAt(0)}
+              {ucfirst(auth.user?.nama.charAt(0) ?? '')}
             </button>
             {userDropdownOpen && (
               <div className="absolute w-40 bg-white flex flex-col shadow-lg rounded-md p-2 border right-0 top-full mt-1">
