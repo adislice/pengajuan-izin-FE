@@ -7,7 +7,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { BrowserRouter } from 'react-router-dom';
 
-axios.defaults.baseURL = "http://127.0.0.1:8000/api/";
+axios.defaults.baseURL = import.meta.env.VITE_BACKEND_BASE_URL;
 const token = localStorage.getItem('token');
 axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 

@@ -1,6 +1,7 @@
 import Button from "@/components/Button";
 import TextInput from "@/components/TextInput";
 import { useAuth } from "@/context/AuthProvider";
+import useDocumentTitle from "@/hooks/useDocumentTitle";
 import { changePassword } from "@/services/authService";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect } from "react";
@@ -20,6 +21,7 @@ export default function Profil() {
   const {register, handleSubmit, formState: { errors }, reset} = useForm<UbahPasswordFormData>({
     resolver: yupResolver(UbahPasswordSchema)
   });
+  useDocumentTitle("Profil");
 
   function handleChangePassword(data: UbahPasswordFormData) {
     Swal.fire({title: 'Mengubah password...'});
